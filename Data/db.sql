@@ -1,0 +1,49 @@
+CREATE TABLE StatusTransaction (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE TypeTransaction (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE User (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(150) NOT NULL,
+    DocumentNumber VARCHAR(50) NOT NULL UNIQUE,
+    Address VARCHAR(150) NOT NULL UNIQUE,
+    Phone VARCHAR(50) NOT NULL UNIQUE,
+    Email VARCHAR(150) NOT NULL UNIQUE,
+    Password VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE PlataformInvoice (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE Invoice (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    InvoiceNumber VARCHAR(150) NOT NULL UNIQUE,
+    Period VARCHAR(50) NOT NULL,
+    InvoiceAmount INT NOT NULL,
+    AmountPaid INT NOT NULL,
+    PlataformId INT NOT NULL,
+    FOREIGN KEY (PlataformId) REFERENCES PlataformInvoice(Id)
+);
+
+CREATE TABLE Transaction (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    TransactionId VARCHAR(150) NOT NULL UNIQUE,
+    TransactionDate DATETIME NOT NULL,
+    Amount INT NOT NULL,
+    StatusId INT NOT NULL,
+    TypeId INT NOT NULL,
+    UserId INT NOT NULL,
+    InvoiceId INT NOT NULL,
+    FOREIGN KEY (StatusId) REFERENCES StatusTransaction(Id),
+    FOREIGN KEY (TypeId) REFERENCES TypeTransaction(Id),
+    FOREIGN KEY (UserId) REFERENCES User(Id),
+    FOREIGN KEY (InvoiceId) REFERENCES Invoice(Id)
+);
