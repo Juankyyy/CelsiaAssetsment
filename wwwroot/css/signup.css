@@ -1,0 +1,30 @@
+main {
+    width: 1100px;
+    flex-direction: row-reverse;
+}
+
+.links a {
+    margin-bottom: 25px;
+}
+
+.inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.input-item input {
+    width: 250px;
+
+}
+
+.inputs-left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputs-right {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
