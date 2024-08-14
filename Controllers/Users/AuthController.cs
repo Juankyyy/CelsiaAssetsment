@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using CelsiaAssetsment.Data;
 using CelsiaAssetsment.Models;
 using CelsiaAssetsment.Utils;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CelsiaAssetsment.Controllers
 {
@@ -18,12 +21,26 @@ namespace CelsiaAssetsment.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         public IActionResult Signup()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -64,7 +81,7 @@ namespace CelsiaAssetsment.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(User user)
+        public async Task<IActionResult> LoginAsync(User user)
         {
             try
             {
@@ -87,6 +104,15 @@ namespace CelsiaAssetsment.Controllers
                     {
                         if (_bcrypt.VerifyPassword(user.Password, userFound.Password))
                         {
+                            var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, userFound.Name),
+                                new Claim(ClaimTypes.Email, userFound.Email)
+                            };
+
+                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                             // Si la contraseña es correcta, ir al home
                             Console.WriteLine($"Password is correct: {userFound.Password}");
                             return RedirectToAction("Index", "Home");

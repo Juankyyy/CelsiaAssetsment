@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using CelsiaAssetsment.Models;
+using System.Security.Claims;
 
 namespace CelsiaAssetsment.Controllers;
 
@@ -15,11 +16,13 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Auth");
+        } else
+        {
+            ViewBag.Username = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
+        }
         return View();
     }
 
