@@ -23,6 +23,40 @@ namespace CelsiaAssetsment.Controllers
         }
 
         [HttpPost]
+        public IActionResult Register(User user)
+        {
+            try
+            {
+                // Datos nulos
+                if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
+                {
+                    Console.WriteLine("Email and Password are required");
+                    return RedirectToAction("Signup");
+                } else
+                {
+                    var userFound = _context.Users.FirstOrDefault(u => u.Email == user.Email);
+
+                    // Correo ya existe
+                    if (userFound != null)
+                    {
+                        Console.WriteLine("Email already exists");
+                        return RedirectToAction("Signup");
+                    } else
+                    {
+                        _context.Users.Add(user);
+                        _context.SaveChanges();
+                        Console.WriteLine("User created");
+                        return RedirectToAction("Index");
+                    }
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return RedirectToAction("Signup");
+            }
+        }
+
+        [HttpPost]
         public IActionResult Login(User user)
         {
             try
@@ -36,8 +70,6 @@ namespace CelsiaAssetsment.Controllers
                 {
                     // Buscar el correo que se ingresa
                     var userFound = _context.Users.FirstOrDefault(u => u.Email == user.Email);
-                    Console.WriteLine(user.Email);
-                    Console.WriteLine(user.Password);
 
                     // Si no se encuentra el usuario
                     if (userFound == null)
