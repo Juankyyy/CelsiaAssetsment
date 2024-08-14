@@ -1,15 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using CelsiaAssetsment.Data;
 using CelsiaAssetsment.Models;
+using CelsiaAssetsment.Utils;
+
 namespace CelsiaAssetsment.Controllers
 {
     public class AuthController : Controller
     {
         private readonly CelsiaAssetsmentContext _context;
+        private readonly Bcrypt _bcrypt;
 
-        public AuthController (CelsiaAssetsmentContext context)
+        public AuthController (CelsiaAssetsmentContext context, Bcrypt bcrypt)
         {
             _context = context;
+            _bcrypt = bcrypt;
         }
 
         public IActionResult Index()
@@ -43,6 +47,9 @@ namespace CelsiaAssetsment.Controllers
                         return RedirectToAction("Signup");
                     } else
                     {
+                        // Encriptar contraseña
+                        user.Password = _bcrypt.HashPassword(user.Password);
+
                         _context.Users.Add(user);
                         _context.SaveChanges();
                         Console.WriteLine("User created");
@@ -78,16 +85,15 @@ namespace CelsiaAssetsment.Controllers
                         return RedirectToAction("Index");
                     } else
                     {
-                        // Si la contraseña no coincide
-                        if (userFound.Password != user.Password)
+                        if (_bcrypt.VerifyPassword(user.Password, userFound.Password))
+                        {
+                            // Si la contraseña es correcta, ir al home
+                            Console.WriteLine($"Password is correct: {userFound.Password}");
+                            return RedirectToAction("Index", "Home");
+                        } else
                         {
                             Console.WriteLine("Password is incorrect");
                             return RedirectToAction("Index");
-                        } else
-                        {
-                            // Si la contraseña es correcta, ir al home
-                            Console.WriteLine("Password is CORRECT");
-                            return RedirectToAction("Index", "Home");
                         }
                     }
                 }
