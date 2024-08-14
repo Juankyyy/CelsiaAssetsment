@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using CelsiaAssetsment.Data;
 using CelsiaAssetsment.Utils;
+using CelsiaAssetsment.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<CelsiaAssetsmentContext>(options =>
     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.20-mysql")));
 
 builder.Services.AddScoped<Bcrypt>();
+builder.Services.AddScoped<UserRepository>();
 
 // Cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -8,5 +8,6 @@ namespace CelsiaAssetsment.Data
         public CelsiaAssetsmentContext(DbContextOptions<CelsiaAssetsmentContext> options) : base(options) {}
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

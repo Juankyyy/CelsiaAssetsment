@@ -26,6 +26,15 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Entities()
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Auth");
+        }
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
